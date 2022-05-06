@@ -4,23 +4,39 @@ import { ArrowLeft } from "phosphor-react";
 import { FeedbackType, feedbackTypes } from "..";
 import { ScreenshotButton } from "../ScreenshotButton";
 import { CloseButton } from "../../CloseButton";
+import { api } from "../../../lib/api";
+import { Loading } from "../Loading";
 
 export function FeedbackContentStep({
 	onFeedbackSent,
 	feedbackType,
 	onBackButton,
 }: Props) {
+	const [isSendingFeedback, setIsSendingFeedback] = useState(false);
 	const [screenshot, setScreenshot] = useState("");
 	const [comment, setComment] = useState("");
 
 	const feedbackTypeInfo = feedbackTypes[feedbackType];
 
-	const submitFeedback = (e: FormEvent) => {
+	const submitFeedback = async (e: FormEvent) => {
 		e.preventDefault();
+
+		if (isSendingFeedback) return;
 
 		console.log({ feedbackType, screenshot, comment });
 
+		setIsSendingFeedback(true);
+
+		await api
+			.post("/feedbacks", {
+				type: feedbackType,
+				screenshot,
+				comment,
+			})
+			.catch(console.error);
+
 		onFeedbackSent();
+		setIsSendingFeedback(false);
 	};
 
 	return (
@@ -61,10 +77,10 @@ export function FeedbackContentStep({
 
 					<button
 						className="p-2 bg-brand-500 rounded-md border-transparent flex-1 flex justify-center items-center text-sm hover:bg-brand-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:ring-brand-500 transition-colors disabled:opacity-50 disabled:hover:bg-brand-500"
-						disabled={comment.length === 0}
+						disabled={comment.length === 0 || isSendingFeedback}
 						type="submit"
 					>
-						Enviar feedback
+						{isSendingFeedback ? <Loading /> : "Enviar feedback"}
 					</button>
 				</footer>
 			</form>
