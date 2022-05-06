@@ -39,6 +39,7 @@ export const submitFeedback = {
 				`<p>Tipo do feedback: ${type}</p>`,
 				`<p>Comentário: ${comment}</p>`,
 				`<p>Screenshot: ${screenshot}</p>`,
+				screenshot ? `<img src='${screenshot}' />` : "",
 				"</div>",
 			].join("\n"),
 		});
