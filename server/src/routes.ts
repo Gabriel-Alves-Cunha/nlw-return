@@ -8,16 +8,22 @@ import { nodemailerMailAdapter } from "./services/nodemailer/nodemailer-mail-ada
 export const routes = express.Router();
 
 routes.post("/feedbacks", async (req, res) => {
-	const { type, comment, screenshot } = req.body;
+	try {
+		const { type, comment, screenshot } = req.body;
 
-	const feedbacksRepository = prismaFeedbacksRepositories;
-	const mailAdapter = nodemailerMailAdapter;
+		const feedbacksRepository = prismaFeedbacksRepositories;
+		const mailAdapter = nodemailerMailAdapter;
 
-	await submitFeedback.run(feedbacksRepository, mailAdapter, {
-		screenshot,
-		comment,
-		type,
-	});
+		await submitFeedback.run(feedbacksRepository, mailAdapter, {
+			screenshot,
+			comment,
+			type,
+		});
 
-	return res.status(statusCode.CREATED).send();
+		return res.status(statusCode.CREATED).send();
+	} catch (error) {
+		console.error(error);
+
+		return res.status(statusCode.INTERNAL_SERVER_ERROR).send();
+	}
 });
