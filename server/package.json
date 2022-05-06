@@ -5,8 +5,10 @@
 	"license": "MIT",
 	"scripts": {
 		"dev": "ts-node-dev src/server.ts",
-		"test": "vitest",
-		"coverage": "vitest run --coverage"
+		"coverage": "vitest run --coverage",
+		"build": "tsc",
+		"start": "node dist/server.js",
+		"test": "vitest"
 	},
 	"devDependencies": {
 		"@types/cors": "^2.8.12",
